@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -15,8 +17,10 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.observables.GroupedObservable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -219,6 +223,68 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void accept(String s) throws Exception {
                         Log.e(TAG, "accept: " + s);
+                    }
+                });
+    }
+
+
+    public void buffer(View view) {
+        Observable.range(0, 5)
+                .buffer(3)
+                .subscribe(new Consumer<List<Integer>>() {
+                    @Override
+                    public void accept(List<Integer> integers) throws Exception {
+                        Log.e(TAG, "accept: " + Arrays.toString(integers.toArray()));
+                    }
+                });
+    }
+
+    /**
+     * groupBy用于分组元素，它可以被用来根据指定的条件将元素分成若干组。
+     * 它将得到一个Observable<GroupedObservable<T, M>>类型的Observable
+     * <p>
+     * 以下函数打印结果：，1，1，2，2，3，3，4，4，5，5，6
+     *
+     * @param view
+     */
+    public void groupBy(View view) {
+        Observable<GroupedObservable<Integer, Integer>> observable
+                = Observable.concat(Observable.range(1, 4), Observable.range(1, 6))
+                .groupBy(new Function<Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer integer) throws Exception {
+                        return integer;
+                    }
+                });
+
+        Observable.concat(observable).subscribe(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                Log.e(TAG, "accept: " + integer);
+            }
+        });
+    }
+
+    /**
+     * scan操作符对原始Observable发射的第一项数据应用一个函数，然后将那个函数的结果作为自己的第一项数据发射。
+     * 它将函数的结果同第二项数据一起填充给这个函数来产生它自己的第二项数据。它持续进行这个过程来产生剩余的数据序列。
+     *
+     * 打印结果：2,6,24,120,720
+     *
+     * @param view
+     */
+    public void scan(View view) {
+        Observable.range(2, 5)
+                .scan(new BiFunction<Integer, Integer, Integer>() {
+                    @Override
+                    public Integer apply(Integer integer, Integer integer2) throws Exception {
+                        return integer * integer2;
+                    }
+                })
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "scan...accept: " + integer);
                     }
                 });
     }

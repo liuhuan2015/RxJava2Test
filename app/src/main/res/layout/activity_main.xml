@@ -84,6 +84,24 @@
             android:onClick="flatMapIterable"
             android:text="flatMapIterable" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="buffer"
+            android:text="buffer" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="groupBy"
+            android:text="groupBy" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="scan"
+            android:text="scan" />
+
     </LinearLayout>
 
 </ScrollView>
