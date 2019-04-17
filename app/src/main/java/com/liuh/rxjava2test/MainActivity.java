@@ -20,6 +20,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.observables.GroupedObservable;
 
 public class MainActivity extends AppCompatActivity {
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * scan操作符对原始Observable发射的第一项数据应用一个函数，然后将那个函数的结果作为自己的第一项数据发射。
      * 它将函数的结果同第二项数据一起填充给这个函数来产生它自己的第二项数据。它持续进行这个过程来产生剩余的数据序列。
-     *
+     * <p>
      * 打印结果：2,6,24,120,720
      *
      * @param view
@@ -288,4 +289,119 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    /**
+     * 和Buffer类似，但不是发射来自原始Observable的数据包，它发射的是Observable，
+     * 这些Observables中的每一个都发射原始Observable数据的一个子集，最后发射一个onCompleted通知。
+     *
+     * @param view
+     */
+    public void window(View view) {
+//        Observable.range(1, 10)
+//                .window(3)
+//                .subscribe(new Consumer<Observable<Integer>>() {
+//                    @Override
+//                    public void accept(Observable<Integer> integerObservable) throws Exception {
+//                        Log.e(TAG, "accept: " + integerObservable.hashCode() + ": " + integerObservable);
+//                    }
+//                });
+
+        Observable.range(1, 10)
+                .window(3)
+                .subscribe(observable
+                        -> observable.subscribe(integer
+                        -> Log.e(TAG, "window: " + observable.hashCode() + ": " + integer)));
+
+    }
+
+    /**
+     * 根据指定的规则对源进行过滤
+     *
+     * @param view
+     */
+    public void filter(View view) {
+        Observable.range(1, 10)
+                .filter(new Predicate<Integer>() {
+                    @Override
+                    public boolean test(Integer integer) throws Exception {
+                        return integer > 5;
+                    }
+                }).subscribe(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                Log.e(TAG, "accept: filter: " + integer);
+            }
+        });
+    }
+
+    /**
+     * 获取源中指定位置的数据
+     * <p>
+     * elementAt & firstElement & lastElement
+     *
+     * @param view
+     */
+    public void elementAt(View view) {
+        Observable.range(1, 10)
+                .elementAt(2)
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: elementAt: " + integer);
+                    }
+                });
+    }
+
+    /**
+     * 对源中重复的数据进行过滤
+     * <p>
+     * distinct & distinctUntilChanged
+     *
+     * @param view
+     */
+    public void distinct(View view) {
+        Observable.just(1, 2, 2, 6, 6, 5, 5, 8, 9, 10)
+                .distinct()
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: distinct: " + integer);
+                    }
+                });
+    }
+
+    /**
+     * skip 用于过滤掉数据的前n项
+     * <p>
+     * skip & skipLast & skipUntil & skipWhile
+     *
+     * @param view
+     */
+    public void skip(View view) {
+        Observable.range(1, 5)
+                .skip(2)
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: skip: " + integer);
+                    }
+                });
+    }
+
+    /**
+     * 和 skip 方法对应，表示按照某种规则进行选择操作
+     *
+     * @param view
+     */
+    public void take(View view) {
+        Observable.range(1, 5)
+                .take(2)
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: take: " + integer);
+                    }
+                });
+    }
+
 }
