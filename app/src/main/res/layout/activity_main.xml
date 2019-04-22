@@ -39,6 +39,12 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="fromCallable"
+            android:text="fromCallable" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:onClick="repeat"
             android:text="repeat" />
 
@@ -137,6 +143,25 @@
             android:layout_height="wrap_content"
             android:onClick="take"
             android:text="take" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="startWith"
+            android:text="startWith" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="merge"
+            android:text="merge" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="concat"
+            android:text="concat" />
+
 
     </LinearLayout>
 

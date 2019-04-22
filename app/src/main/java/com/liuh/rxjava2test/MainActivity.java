@@ -102,6 +102,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * from 从指定的数据源中获取Observable
+     *
+     * @param view
+     */
+    public void fromCallable(View view) {
+        Observable.fromCallable(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return Observable.just(1, 2, 3, 4, 5);
+            }
+        }).subscribe(new Consumer<Object>() {
+            @Override
+            public void accept(Object o) throws Exception {
+                Log.e(TAG, "accept: " + o);
+            }
+        });
+    }
+
     public void repeat(View view) {
         Observable.range(5, 10)
                 .repeat(10)
@@ -404,4 +423,49 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * startWith 在指定的数据源之前插入数据
+     *
+     * @param view
+     */
+    public void startWith(View view) {
+        Observable.range(1, 5)
+                .startWith(0)
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: " + integer);
+                    }
+                });
+    }
+
+    /**
+     * marge
+     *
+     * @param view
+     */
+    public void merge(View view) {
+        Observable.merge(Observable.range(1, 5), Observable.range(6, 5))
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: merge:" + integer);
+                    }
+                });
+    }
+
+    /**
+     * concat
+     *
+     * @param view
+     */
+    public void concat(View view) {
+        Observable.concat(Observable.range(1, 5), Observable.range(6, 5))
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: concat: " + integer);
+                    }
+                });
+    }
 }
