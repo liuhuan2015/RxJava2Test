@@ -162,6 +162,41 @@
             android:onClick="concat"
             android:text="concat" />
 
+        <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="doSeries"
+        android:text="doSeries" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="timeout"
+            android:text="timeout" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="retry"
+            android:text="retry" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="all"
+            android:text="all" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="toSortedList"
+            android:text="toSortedList" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="toConvert"
+            android:text="toConvert" />
 
     </LinearLayout>
 

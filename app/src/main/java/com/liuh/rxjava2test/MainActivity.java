@@ -7,16 +7,20 @@ import android.view.View;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -467,5 +471,148 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "accept: concat: " + integer);
                     }
                 });
+    }
+
+    /**
+     * do 系列
+     *
+     * @param view
+     */
+    public void doSeries(View view) {
+        Observable.range(1, 5)
+                .doOnEach(new Consumer<Notification<Integer>>() {
+                    @Override
+                    public void accept(Notification<Integer> integerNotification) throws Exception {
+                        Log.e(TAG, "accept: doOnEach: " + integerNotification);
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        Log.e(TAG, "run: doOnComplete");
+                    }
+                })
+                .doFinally(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        Log.e(TAG, "run: doFinally");
+                    }
+                })
+                .doAfterNext(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: doAfterNext: " + integer);
+                    }
+                })
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        Log.e(TAG, "accept: Subscribe");
+                    }
+                })
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        Log.e(TAG, "run: terminate");
+                    }
+                })
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer integer) throws Exception {
+                        Log.e(TAG, "accept: " + integer);
+                    }
+                });
+    }
+
+    /**
+     * timeout
+     *
+     * @param view
+     */
+    public void timeout(View view) {
+        Observable.interval(1000, 200, TimeUnit.MILLISECONDS)
+                .timeout(500, TimeUnit.MILLISECONDS, Observable.rangeLong(1, 5))
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        Log.e(TAG, "accept: aLong: " + aLong);
+                    }
+                });
+    }
+
+
+    /**
+     * retry
+     *
+     * @param view
+     */
+    public void retry(View view) {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) throws Exception {
+                emitter.onNext(0);
+                emitter.onError(new Throwable("Error 1"));
+            }
+        }).retry(2).subscribe(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+                Log.e(TAG, "accept: " + integer);
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                Log.e(TAG, "accept: throwable: " + throwable.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     * all 要发射的数据项是否全部满足指定的要求
+     *
+     * @param view
+     */
+    public void all(View view) {
+        Observable.range(5, 5).all(new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer integer) throws Exception {
+                return integer > 5;
+            }
+        }).subscribe(new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean aBoolean) throws Exception {
+                Log.e(TAG, "accept: aBoolean：" + aBoolean);
+            }
+        });
+    }
+
+    /**
+     * toSortedList
+     *
+     * @param view
+     */
+    public void toSortedList(View view) {
+        Observable.range(1, 5).toSortedList(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2 - o1;
+            }
+        }).subscribe(new Consumer<List<Integer>>() {
+            @Override
+            public void accept(List<Integer> integers) throws Exception {
+                Log.e(TAG, "accept: integers: " + integers);
+            }
+        });
+    }
+
+    /**
+     * to 转换
+     *
+     * @param view
+     */
+    public void toConvert(View view) {
+        Observable.range(1, 5)
+                .to((Function<Observable<Integer>, Observable>) integerObservable
+                        -> integerObservable).subscribe(o -> Log.e(TAG, "accept: " + o.toString()));
     }
 }
